@@ -1,5 +1,5 @@
 const fbAdmin = require("firebase-admin");
-const serviceCreds = require("../ecommerce-project-backend-firebase-adminsdk-l3nye-39c337adb9.json")
+const serviceCreds = require("/etc/secrets/ecommerce-project-backend-firebase-adminsdk-l3nye-39c337adb9.json")
 
 fbAdmin.initializeApp({
     credential: fbAdmin.credential.cert(serviceCreds),
