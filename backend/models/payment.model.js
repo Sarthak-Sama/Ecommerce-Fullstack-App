@@ -41,6 +41,17 @@ const paymentSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    shop: {
+        type: Schema.Types.ObjectId,
+        ref: 'Shop',
+        required: true
+    },
+
+    buyer: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }
 });
 
 module.exports = mongoose.model('Payment', paymentSchema);

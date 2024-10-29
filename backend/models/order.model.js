@@ -24,6 +24,11 @@ const orderSchema = new Schema({
         ref: "payment",
         required: true,
     },
+    shop: {
+        type: Schema.Types.ObjectId,
+        ref: 'Shop',
+        required: true
+    },
     status: {
         type: String,
         required: true,

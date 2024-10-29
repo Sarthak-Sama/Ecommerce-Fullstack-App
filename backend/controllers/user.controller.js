@@ -1,16 +1,24 @@
 const userModel = require("../models/user.model");
+const shopModel = require("../models/shop.model")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const blackListModel = require("../models/blacklist.model");
+const { isAdmin } = require("../middlewares/auth.middleware");
+const orderModel = require("../models/order.model");
+const paymentModel = require("../models/payment.model");
 
 
 
 module.exports.signup = async (req, res, next) => {
     try {
-        const { email, password, username, role } = req.body;
-        if (!email || !password || !username) {
+        const { email, password, username, role, shop } = req.body;
+
+        const requiredFields = req.body.role != "seller" ? ['email', 'password', 'username'] : ['email', 'password', 'username', 'shop'];
+        const missingFields = requiredFields.filter(field => !req.body[field]);
+
+        if (missingFields.length > 0) {
             return res.status(400).json({
-                message: "All fields are required"
+                message: `Missing fields: ${missingFields.join(', ')}`
             });
         }
 
@@ -27,14 +35,24 @@ module.exports.signup = async (req, res, next) => {
             email, 
             password: hashedPassword,
             username,
-            role
+            role,
+            shop
         });
+        
+        let createdShop;
+        if(role == "seller"){
+            createdShop = await shopModel.create({
+            name: shop,
+            owner: user._id
+            })
+        }
 
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: `${7*24}h` });
+        const token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: `${7*24}h` });
 
         res.status(201).json({
             message: "User created successfully.",
             user,
+            ...(role === "seller" && { createdShop }),
             token
         });
     } catch (error) {
@@ -109,16 +127,35 @@ module.exports.signout = async (req, res, next) => {
 module.exports.profile = async (req, res, next) => {
     try {
         const user = await userModel.findById(req.user._id);
+        const orders = await orderModel.find({buyer: req.user._id})
+        .populate('products.product') // Populate product details
+        .populate('payment') // Populate payment details
+        .populate('shop'); // Populate shop details
 
         res.status(200).json({
-            message: "User fetched sucessfully",
-            user
-        })
+            message: "User fetched successfully",
+            user,
+            orders
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
 }
 
+module.exports.transactionHistory = async (req, res, next) => {
+    try {
+        const transactions = await paymentModel.find({buyer: req.user._id})
+        .populate('shop');
+
+
+
+        res.status(200).json({
+            transactions
+        })
+    } catch (error) {
+        next(error);
+    }
+}
 
 
 

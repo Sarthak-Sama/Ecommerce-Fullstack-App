@@ -1,6 +1,7 @@
 const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
-const blackListModel = require("../models/blacklist.model")
+const blackListModel = require("../models/blacklist.model");
+const shopModel = require("../models/shop.model");
 
 module.exports.isAuthenticated = async(req, res, next) => {
     try {
@@ -19,7 +20,7 @@ module.exports.isAuthenticated = async(req, res, next) => {
         if(!user) {
             return res.status(401).json({
                 message: "Unauthorized"
-            });
+            }); 
         }
 
         // Set the user on the request object
@@ -45,3 +46,33 @@ module.exports.isSeller = async (req, res, next) => {
         next(error);
     }
 };
+
+module.exports.isAdmin = async (req, res, next) => {
+    try {
+        if (req.user && req.user.isAdmin === true) {
+            next();
+        } else {
+            res.status(403).json({
+                message: "Unauthorized"
+            });
+        }
+        
+    } catch (error) {
+        next(error)
+    }
+}
+
+modeul.exports.isBlackListedShop = async (req, res, next) => {
+    try {
+        shop = shopModel.findone({owner: req.user._id})
+        if (shop.isBlackListed === false){
+            next();
+        } else{
+            res.status(403).json({
+                message: "Unathorized"
+            })
+        }
+    } catch (error) {
+        next(error)
+    }
+}

@@ -1,6 +1,7 @@
 const productModel = require("../models/product.model");
 const paymentModel = require("../models/payment.model");
 const orderModel = require("../models/order.model");
+const shopModel = require("../models/shop.model.js")
 
 const Razorpay = require('razorpay');
 const { messaging } = require("firebase-admin");
@@ -90,6 +91,24 @@ module.exports.verifyPayment = async (req, res, next) => {
             })
         }
 
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports.shopDashboard = async (req, res, next) =>{
+    try {
+        const shop = await shopModel.findone({onwer: req.user._id});
+        const products = await productModel.find({shop: shop._id});
+        const orders = await orderModel.find({shop: shop._id});
+        const payments = await paymentModel.find({shop: shop_id})
+
+        res.status(200).json({
+            shop,
+            products,
+            orders,
+            payments
+        })
     } catch (error) {
         next(error);
     }

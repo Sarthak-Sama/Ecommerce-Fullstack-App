@@ -11,6 +11,14 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
+    category:{
+        type: String,
+        enum: ["womenswear", "menswear", "kids"],
+        required:true
+    },
+    discount:{
+        type: Number,
+    },
     price: {
         type: Number,
         required: true,
@@ -18,12 +26,13 @@ const productSchema = new Schema({
     },
     seller: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Shop',
         required: true
     },
     images: [{
         type: String,
-    }]
+    }],
+    isActive: { type: Boolean, default: true }
 });
 
 module.exports = mongoose.model('Product', productSchema);

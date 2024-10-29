@@ -11,6 +11,7 @@ router.post('/signin', userController.signin);
 // Protected routes
 router.post('/signout', authMiddleware.isAuthenticated, userController.signout);
 router.get('/profile', authMiddleware.isAuthenticated, userController.profile);
+router.get("/profile/transaction-history", authMiddleware.isAuthenticated, userController.transactionHistory);
 
 
 
