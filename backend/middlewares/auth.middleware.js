@@ -62,7 +62,7 @@ module.exports.isAdmin = async (req, res, next) => {
     }
 }
 
-modeul.exports.isBlackListedShop = async (req, res, next) => {
+module.exports.isBlackListedShop = async (req, res, next) => {
     try {
         shop = shopModel.findone({owner: req.user._id})
         if (shop.isBlackListed === false){
