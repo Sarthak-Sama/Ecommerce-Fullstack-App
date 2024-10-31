@@ -11,7 +11,7 @@ const paymentModel = require("../models/payment.model");
 
 module.exports.signup = async (req, res, next) => {
     try {
-        const { email, password, username, role, shop } = req.body;
+        const { email, password, username, role, shop} = req.body;
 
         const requiredFields = req.body.role != "seller" ? ['email', 'password', 'username'] : ['email', 'password', 'username', 'shop'];
         const missingFields = requiredFields.filter(field => !req.body[field]);
@@ -36,7 +36,7 @@ module.exports.signup = async (req, res, next) => {
             password: hashedPassword,
             username,
             role,
-            shop
+            shop,
         });
         
         let createdShop;

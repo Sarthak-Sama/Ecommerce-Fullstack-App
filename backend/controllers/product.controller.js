@@ -19,7 +19,7 @@ module.exports.createProduct = async (req, res) => {
         }
 
         const product = await productModel.create({
-            name, description, category, discount: discount || 0, price, seller: shop
+            name, description, category, discount: discount || 0, price, seller: shop._id
         })
 
         const images = req.files.map(file=>file.publicUrl).filter(url=>url ? true : false);
@@ -64,7 +64,7 @@ module.exports.deleteProduct = async (req, res, next) => {
 module.exports.getWomensWear = async (req, res, next) => {
     try {
 
-        const products = await productModel.find({category:"womenswear"})
+        const products = await productModel.find({category:"womenswear", isActive:true})
         res.status(200).json({
             products
         })
@@ -78,7 +78,7 @@ module.exports.getWomensWear = async (req, res, next) => {
 module.exports.getMensWear = async (req, res, next) => {
     try {
 
-        const products = await productModel.find({category:"menswear"})
+        const products = await productModel.find({category:"menswear", isActive:true})
         res.status(200).json({
             products
         })
@@ -92,7 +92,7 @@ module.exports.getMensWear = async (req, res, next) => {
 module.exports.getKidsWear = async (req, res, next) => {
     try {
 
-        const products = await productModel.find({category:"kidswear"})
+        const products = await productModel.find({category:"kids", isActive:true})
         res.status(200).json({
             products
         })
@@ -105,8 +105,8 @@ module.exports.getKidsWear = async (req, res, next) => {
 
 module.exports.getProductById = async (req, res, next) => {
     try {
-        const product = await productModel.findById(req.params.id);
-        
+        const product = await productModel.findOne({_id: req.params.id, isActive: true});
+                
         res.status(200).json({
             product
         })

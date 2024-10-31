@@ -1,5 +1,5 @@
 const fbAdmin = require("firebase-admin");
-const serviceCreds = require("/etc/secrets/firebase.json")
+const serviceCreds = require("../etc/secrets/firebase.json")
 
 fbAdmin.initializeApp({
     credential: fbAdmin.credential.cert(serviceCreds),

@@ -9,5 +9,5 @@ router.get("/products", authMiddleware.isAuthenticated, indexController.getAllPr
 router.get("/order/:id", authMiddleware.isAuthenticated, indexController.createOrder);
 router.get("/verify-payment/:id", authMiddleware.isAuthenticated, indexController.verifyPayment)  
 
-router.get("/shop-dashboard", indexController.shopDashboard)
+router.get("/shop-dashboard", authMiddleware.isSeller, indexController.shopDashboard)
 module.exports = router;

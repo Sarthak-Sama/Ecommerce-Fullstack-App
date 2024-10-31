@@ -49,7 +49,7 @@ module.exports.isSeller = async (req, res, next) => {
 
 module.exports.isAdmin = async (req, res, next) => {
     try {
-        if (req.user && req.user.isAdmin === true) {
+        if (req.user && req.user.role === "admin") {
             next();
         } else {
             res.status(403).json({

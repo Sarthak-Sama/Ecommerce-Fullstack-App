@@ -12,7 +12,7 @@ router.get("/womens-wear", productController.getWomensWear)
 router.get("/mens-wear", productController.getMensWear)
 router.get("/kids-wear", productController.getKidsWear)
 
-router.get("/product/:id", productController.getProductById)
+router.get("/:id", productController.getProductById)
 
 // -------- POST ROUTES ------- //
 router.post("/create-product", authMiddleware.isAuthenticated, authMiddleware.isSeller, upload.any("image"), productController.createProduct);

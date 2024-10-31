@@ -18,7 +18,7 @@ module.exports.index = async(req, res, next)=>{
 
 module.exports.getAllProducts = async(req, res, next) => {
     try {
-        const products = await productModel.find({});
+        const products = await productModel.find({isActive: true});
 
         res.status(200).json({
             products

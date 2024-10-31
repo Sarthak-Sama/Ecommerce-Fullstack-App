@@ -21,7 +21,7 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'seller'],
+        enum: ['user', 'seller', 'admin'],
         default: 'user'
     },
     shop: {
@@ -29,10 +29,6 @@ const userSchema = new Schema({
         required: function() {
         return this.role === 'seller';
     }},
-    isAdmin: {
-        type: Boolean,
-        default: false
-    }
 })
 
 
