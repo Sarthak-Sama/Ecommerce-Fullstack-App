@@ -21,6 +21,7 @@ app.use("/user", userRoutes)
 app.use("/product", productRoutes)
 app.use("/cart", cartRoutes)
 
-app.listen(3000, ()=>{
-    console.log("server is running on port 3000")
-})
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});

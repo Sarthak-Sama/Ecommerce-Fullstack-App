@@ -15,6 +15,12 @@ const userSchema = new Schema({
         trim: true,
         lowercase: true
     },
+    mobile: {
+        type: Number,
+        required: true,
+        unique: true,
+        trim: true
+    },
     password: {
         type: String,
         required: true
@@ -29,6 +35,10 @@ const userSchema = new Schema({
         required: function() {
         return this.role === 'seller';
     }},
+    isVerified: {
+        type: Boolean,
+        default: false
+    }
 })
 
 

@@ -5,6 +5,7 @@ const shopModel = require("../models/shop.model.js")
 
 const Razorpay = require('razorpay');
 const { messaging } = require("firebase-admin");
+const nodemailer = require('nodemailer');
 
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -59,36 +60,54 @@ module.exports.createOrder = async (req, res, next) => {
 
 module.exports.verifyPayment = async (req, res, next) => {
     try {
-        const {paymentID, orderID, signature} = req.body;
+        const { paymentID, orderID, signature } = req.body;
         const secret = process.env.RAZORPAY_KEY_SECRET;
 
-        const {validatePaymentVerification} = require("../node_modules/razorpay/dist/utils/razorpay-utils.js")
+        const { validatePaymentVerification } = require("../node_modules/razorpay/dist/utils/razorpay-utils.js");
         const isValid = validatePaymentVerification({
             order_id: orderID,
             payment_id: paymentID
         },
         signature, secret);
 
-        if(isValid){
-            const payment = await paymentModel.findOne({orderID: orderID})
+        if (isValid) {
+            const payment = await paymentModel.findOne({ orderID: orderID });
 
             payment.paymentID = paymentID;
             payment.signature = signature;
             payment.status = "success";
-            
-            await payment.save()
+
+            await payment.save();
+
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            const orderDetails = await orderModel.findById(orderID);
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: payment.userEmail,
+                subject: 'Payment Confirmation',
+                text: `Your payment has been verified successfully!\n\nOrder Details:\nOrder ID: ${orderID}\nAmount: ${orderDetails.amount}\nCurrency: ${orderDetails.currency}`,
+            };
+
+            await transporter.sendMail(mailOptions);
 
             res.status(200).json({
-                message: "Payement verified successfully"
-            })
-        } else{
-            const payment = await paymentModel.findOne({orderID: orderID})
+                message: "Payment verified successfully"
+            });
+        } else {
+            const payment = await paymentModel.findOne({ orderID: orderID });
 
             payment.status = "failed";
 
             res.status(400).json({
                 message: "Payment failed"
-            })
+            });
         }
 
     } catch (error) {

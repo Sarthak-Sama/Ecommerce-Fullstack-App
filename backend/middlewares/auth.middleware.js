@@ -5,7 +5,7 @@ const shopModel = require("../models/shop.model");
 
 module.exports.isAuthenticated = async(req, res, next) => {
     try {
-        const token = req.headers.authorization.split(" ")[1];
+        let token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : req.cookies.token;
 
         const isBlackListed = await blackListModel.findOne({token});
         if(isBlackListed){
