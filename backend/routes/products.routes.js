@@ -8,7 +8,7 @@ const { auth } = require("firebase-admin");
 const router = express.Router();
 // ---------- GET ROUTES --------------//
 
-router.get("/all", indexController.getAllProducts);
+router.get("/all", productController.getAllProducts);
 router.get("/womens-wear", productController.getWomensWear);
 router.get("/mens-wear", productController.getMensWear);
 router.get("/kids", productController.getKidsWear);
