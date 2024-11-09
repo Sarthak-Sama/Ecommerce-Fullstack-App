@@ -1,13 +1,29 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Oddval";
+  src: url("../public/fonts/Oddval-SemiBold.ttf");
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@font-face {
+  font-family: "SourceSans";
+  src: url("../public/fonts/SourceSansPro-ExtraLight.otf");
+  font-weight: 100;
+}
+@font-face {
+  font-family: "SourceSans";
+  src: url("../public/fonts/SourceSansPro-Light.otf");
+  font-weight: 200;
+}
+@font-face {
+  font-family: "SourceSans";
+  src: url("../public/fonts/SourceSansPro-Semibold.otf");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "SourceSans";
+  src: url("../public/fonts/SourceSansPro-Bold.otf");
+  font-weight: 800;
 }
