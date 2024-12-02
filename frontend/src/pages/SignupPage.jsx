@@ -1,4 +1,6 @@
+import axios from "../utils/axios";
 import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
   const [password, setPassword] = useState("");
@@ -7,6 +9,9 @@ const SignupPage = () => {
   const [formValid, setFormValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Function to check password strength using regex
   const handlePasswordChange = (e) => {
@@ -44,13 +49,39 @@ const SignupPage = () => {
   };
 
   // Form submit handler
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSignup = async (e) => {
+    e.preventDefault(); // prevent the default form submission
     if (!formValid) {
       setError("Please ensure all fields are valid.");
-    } else {
-      setError(""); // clear any errors
-      alert("Form submitted!");
+      return;
+    }
+
+    // Collect form data
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    const mobile = e.target.mobile.value;
+    try {
+      const response = await axios.post("/user/signup", {
+        name,
+        email,
+        mobile,
+        password,
+      });
+      if (response.status === 200) {
+        setError(""); // Clear any existing errors
+        navigate(`${location.pathname}/verify-otp`, {
+          state: { mobile, password },
+        });
+      }
+    } catch (err) {
+      // Handle errors (e.g., network issues or server validation errors)
+      if (err.response && err.response.data) {
+        setError(
+          err.response.data.message || "Signup failed. Please try again."
+        );
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -86,10 +117,11 @@ const SignupPage = () => {
       <div className="w-1/2 flex items-center justify-center">
         <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-2xl font-semibold mb-6">Create new account</h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSignup}>
             <div className="mb-4">
               <label className="block text-gray-700">Name</label>
               <input
+                name="name"
                 type="text"
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#EC3432]"
               />
@@ -98,6 +130,7 @@ const SignupPage = () => {
               <label className="block text-gray-700">Email Address</label>
               <input
                 type="email"
+                name="email"
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#EC3432]"
               />
             </div>
@@ -105,6 +138,7 @@ const SignupPage = () => {
               <label className="block text-gray-700">Mobile Number</label>
               <input
                 type="tel"
+                name="mobile"
                 maxLength={10}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#EC3432] appearance-none"
               />
@@ -113,6 +147,7 @@ const SignupPage = () => {
               <label className="block text-gray-700">Password</label>
               <div className="relative">
                 <input
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={handlePasswordChange}
@@ -167,9 +202,9 @@ const SignupPage = () => {
             </p>
             <p className="mt-4 text-gray-500">
               Already registered?{" "}
-              <a href="#" className="text-[#EC3432] underline">
+              <Link to={"/login"} className="text-[#EC3432] underline">
                 Login
-              </a>
+              </Link>
             </p>
           </div>
         </div>

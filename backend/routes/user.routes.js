@@ -10,11 +10,6 @@ router.post("/signin", userController.signin);
 // Protected routes
 router.post("/signout", authMiddleware.isAuthenticated, userController.signout);
 router.get("/profile", authMiddleware.isAuthenticated, userController.profile);
-router.post(
-  "/create-shop",
-  authMiddleware.isAuthenticated,
-  userController.createShop
-);
 
 router.get(
   "/profile/transaction-history",

@@ -27,3 +27,19 @@
   src: url("../public/fonts/SourceSansPro-Bold.otf");
   font-weight: 800;
 }
+
+.custom-line-through {
+  position: relative; /* Add this to position the pseudo-element */
+}
+
+.custom-line-through::after {
+  content: ""; /* Create a pseudo-element */
+  position: absolute;
+  left: -6%;
+  right: 0; /* Extend the line across the full width */
+  top: 50%; /* Center it vertically */
+  height: 3px; /* Thickness of the line */
+  width: 62.5px;
+  background-color: #a1a1aa; /* Change the color as needed */
+  border-radius: 50px;
+}

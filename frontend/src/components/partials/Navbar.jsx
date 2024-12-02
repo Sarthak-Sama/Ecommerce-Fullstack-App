@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import SearchBar from "./SearchBar";
+import { motion } from "framer-motion";
 import {
   RiHeart3Fill,
   RiHeart3Line,
   RiShoppingBag2Line,
   RiUserLine,
   RiUserFill,
+  RiUser2Line,
+  RiInstanceLine,
+  RiLogoutBoxRLine,
 } from "@remixicon/react";
 
 function Navbar() {
@@ -14,7 +18,7 @@ function Navbar() {
   const [hoveredOverUser, setHoveredOverUser] = useState(false);
 
   return (
-    <div className="w-full h-[4.25rem] border-[1px] border-zinc-400 rounded-[16px] flex items-center justify-between px-6 py-2 mb-6">
+    <div className="relative z-[9999] w-full h-[4.25rem] border-[1px] border-zinc-400 rounded-[16px] flex items-center justify-between px-6 py-2 mb-6 bg-white">
       {/* Left Section */}
       <Link to={`/`} id="left-section">
         <h2 className='text-2xl font-["Oddval"] tracking-tighter'>PUREM</h2>
@@ -75,6 +79,45 @@ function Navbar() {
           )}
         </div>
       </div>
+
+      <motion.div
+        id="user-menu"
+        className="absolute right-[1.5%] top-[100%]"
+        initial={{ opacity: 0, y: -20 }}
+        animate={
+          hoveredOverUser ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }
+        }
+        transition={{ duration: 0.3 }}
+        onMouseEnter={() => setHoveredOverUser(true)}
+        onMouseLeave={() => setHoveredOverUser(false)}
+      >
+        <div
+          className="w-7 h-7 bg-zinc-100 absolute -top-5 right-[1%]"
+          style={{ clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" }}
+        ></div>
+        <div className="w-[13rem] bg-zinc-100 absolute right-[1%] top-[100%] rounded-xl p-5">
+          <Link
+            to={"/login"}
+            className="flex gap-4 hover:-translate-y-1 transition-all duration-[.3s] ease-in-out"
+          >
+            <RiUser2Line /> Login
+          </Link>
+          <hr className="border-zinc-400 border-[.7px] my-3" />
+          <Link
+            to={"/login"}
+            className="flex gap-4 mt-3 hover:-translate-y-1 transition-all duration-[.3s] ease-in-out"
+          >
+            <RiInstanceLine /> Orders
+          </Link>
+          <hr className="border-zinc-400 border-[.7px] my-3" />
+          <Link
+            to={"/login"}
+            className="flex gap-4 mt-3 hover:-translate-y-1 transition-all duration-[.3s] ease-in-out"
+          >
+            <RiLogoutBoxRLine /> Logout
+          </Link>
+        </div>
+      </motion.div>
     </div>
   );
 }

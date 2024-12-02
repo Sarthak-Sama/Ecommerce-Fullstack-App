@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Link } from "react-router-dom";
 import { RiArrowDownLine, RiMailLine, RiStore2Line } from "@remixicon/react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../redux/actions/productsAction";
+
 function HomePage() {
   const [isHovering, setIsHovering] = useState(false);
   const [isCursorVisible, setIsCursorVisible] = useState(false);
@@ -67,8 +70,9 @@ function HomePage() {
                   stroke="black"
                   stroke-width="3"
                 >
+                  {/* Stratight line */}
                   <line x1="0" y1="15" x2="200" y2="15" />
-
+                  {/* The arrow head */}
                   <line x1="200" y1="15" x2="185" y2="5" />
                   <line x1="200" y1="15" x2="185" y2="25" />
                 </svg>
@@ -90,7 +94,7 @@ function HomePage() {
             <div
               className="relative bg-red-200 w-full h-[15.5vw] rounded-[30px] "
               style={{
-                backgroundImage: 'url("path/to/your/image.jpg")',
+                backgroundImage: "",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
@@ -102,7 +106,7 @@ function HomePage() {
             <div
               className="relative bg-red-200 w-full h-[15.5vw] rounded-[30px]"
               style={{
-                backgroundImage: 'url("path/to/your/image.jpg")',
+                backgroundImage: "",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
@@ -117,7 +121,7 @@ function HomePage() {
           id="right-page"
           className="w-[49.7%] rounded-[30px] bg-red-600 h-[85vh] relative overflow-hidden"
           style={{
-            backgroundImage: 'url("path/to/your/image.jpg")',
+            backgroundImage: "",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
