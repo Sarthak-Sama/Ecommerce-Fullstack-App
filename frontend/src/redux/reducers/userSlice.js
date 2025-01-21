@@ -6,13 +6,22 @@ const initialState = {
 
 const userSlice = createSlice({
   name: "user",
-  initialState,
+  initialState: {
+    user: null,
+    isAuthenticated: false,
+  },
   reducers: {
-    loadUser: (state, action) => {
-      state.user = action.payload; // Store the user data in Redux
+    setCredentials: (state, action) => {
+      state.user = action.payload.user;
+      state.isAuthenticated = true;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
     },
   },
 });
 
-export const { loadUser } = userSlice.actions;
+export const { setCredentials, logout } = userSlice.actions;
 export default userSlice.reducer;

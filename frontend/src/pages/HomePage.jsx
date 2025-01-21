@@ -4,12 +4,23 @@ import { Link } from "react-router-dom";
 import { RiArrowDownLine, RiMailLine, RiStore2Line } from "@remixicon/react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/actions/productsAction";
+import Carousel from "../components/Carousel";
+import axios from "../utils/axios";
 
 function HomePage() {
   const [isHovering, setIsHovering] = useState(false);
   const [isCursorVisible, setIsCursorVisible] = useState(false);
   const [isLinkHovering, setIsLinkHovering] = useState(false);
+  const [saleProducts, setSaleProducts] = useState([]);
 
+  const fetchSaleProducts = async () => {
+    const response = await axios.get("/products/sale");
+    setSaleProducts(response.data.products);
+  };
+
+  useEffect(() => {
+    fetchSaleProducts();
+  }, []);
   // Create motion values for x and y coordinates
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -53,12 +64,12 @@ function HomePage() {
 
   return (
     <main
-      className="w-full h-full overflow-hidden"
+      className="mx-auto w-full h-full"
       style={{ backgroundColor: "#FFFEFE" }}
     >
       <div id="landing-page" className="flex gap-2">
-        <div id="left-page" className="w-[49.7%]">
-          <div className="px-[3rem] py-[3rem] rounded-[30px] bg-[#DBDAD7]">
+        <div id="left-page" className="w-[48%]">
+          <div className="px-[3rem] h-[70%] py-[3rem] rounded-[30px] bg-[#DBDAD7]">
             <h2 className='font-["Oddval"] flex items-center text-[5vw] uppercase tracking-tighter leading-[5vw]'>
               for
               <span className="ml-10">
@@ -90,9 +101,9 @@ function HomePage() {
               sure each is vetted for a stress-free shopping experience.
             </p>
           </div>
-          <div className="flex gap-[.5vw] items-center justify-between mt-2">
+          <div className="flex h-[28.5%] gap-[.5vw] items-center justify-between mt-2">
             <div
-              className="relative bg-red-200 w-full h-[15.5vw] rounded-[30px] "
+              className="relative h-full bg-red-200 w-full h-[15.5vw] rounded-[30px] "
               style={{
                 backgroundImage: "",
                 backgroundSize: "cover",
@@ -104,7 +115,7 @@ function HomePage() {
               </h3>
             </div>
             <div
-              className="relative bg-red-200 w-full h-[15.5vw] rounded-[30px]"
+              className="relative h-full bg-red-200 w-full h-[15.5vw] rounded-[30px]"
               style={{
                 backgroundImage: "",
                 backgroundSize: "cover",
@@ -119,7 +130,7 @@ function HomePage() {
         </div>
         <div
           id="right-page"
-          className="w-[49.7%] rounded-[30px] bg-red-600 h-[85vh] relative overflow-hidden"
+          className="w-[52%] rounded-[30px] bg-red-600 h-[85vh] relative overflow-hidden"
           style={{
             backgroundImage: "",
             backgroundSize: "cover",
@@ -190,6 +201,10 @@ function HomePage() {
             </motion.div>
           )}
         </div>
+      </div>
+      <div className="my-5">
+        <h2 className="text-5xl">Sale</h2>
+        <Carousel data={saleProducts} />
       </div>
 
       <div id="mission-div" className="flex w-full gap-2">

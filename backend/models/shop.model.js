@@ -8,6 +8,10 @@ const shopSchema = new Schema({
     unique: true,
     trim: true,
   },
+  description: {
+    type: String,
+    required: true,
+  },
   products: [
     {
       type: Schema.Types.ObjectId,

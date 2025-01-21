@@ -7,12 +7,67 @@ import {
   RiShoppingBag2Line,
 } from "@remixicon/react";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "../../utils/axios";
 
 function ProductCard({ product }) {
-  const [isHoveringOverHeart, setIsHoveringOverHeart] = useState(false);
-  const [isHoveringOverCart, setIsHoveringOverCart] = useState(false);
   const [imageNumber, setImageNumber] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(product.isWishlisted);
+  const [inCart, setInCart] = useState(product.isInCart);
+  const [isWishListStatusLoading, setIsWishListStatusLoading] = useState(false);
+  const [isCartStatusLoading, setIsCartStatusLoading] = useState(false);
 
+  const addToWishlist = async (e, id) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isWishListStatusLoading) return;
+
+    setIsWishListStatusLoading(true);
+
+    try {
+      if (!isWishlisted) {
+        // Adding to wishlist
+        setIsWishlisted(true);
+        await axios.post("/wishlist/add", { productId: id });
+      } else {
+        // Removing from wishlist
+        setIsWishlisted(false);
+        await axios.delete("/wishlist/remove", { data: { productId: id } });
+      }
+    } catch (error) {
+      // Revert changes if an error occurs
+      setIsWishlisted((prev) => !prev);
+    } finally {
+      setIsWishListStatusLoading(false);
+    }
+  };
+
+  const addToCart = async (e, id) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isCartStatusLoading) return;
+
+    setIsCartStatusLoading(true);
+
+    try {
+      if (!inCart) {
+        // ADding to cart
+        setInCart(true);
+        await axios.post("/cart/add", { productId: id });
+      } else {
+        // Removing from cart
+        setInCart(false);
+        await axios.delete("/cart/remove", { productId: id });
+      }
+    } catch (error) {
+      // Revert changes if an error occurs
+      setInCart((prev) => !prev);
+    } finally {
+      setIsCartStatusLoading(false);
+    }
+  };
   const navToRight = () => {
     if (imageNumber < product.images.length - 1) {
       setImageNumber(imageNumber + 1);
@@ -24,8 +79,13 @@ function ProductCard({ product }) {
     }
   };
 
+  console.log(product);
+
   return (
-    <div className="rounded-xl w-[20rem] h-[25rem] relative overflow-hidden border-[1px] border-zinc-300 shadow-xl">
+    <Link
+      to={`/product/${product._id}`}
+      className="rounded-xl w-[20rem] h-[25rem] relative overflow-hidden border-[1px] border-zinc-300 shadow-xl"
+    >
       <div id="preview-div" className="w-full h-[80%] relative group">
         <div
           id="images"
@@ -84,29 +144,30 @@ function ProductCard({ product }) {
           )}
         </div>
         <div className="flex items-center gap-2 translate-y-1">
-          <div
-            onMouseEnter={() => setIsHoveringOverHeart(true)}
-            onMouseLeave={() => setIsHoveringOverHeart(false)}
-          >
-            {isHoveringOverHeart ? (
-              <RiHeart3Fill color="#DE3163" size={32} />
-            ) : (
-              <RiHeart3Line size={32} />
-            )}
+          <div className="group" onClick={(e) => addToWishlist(e, product._id)}>
+            <RiHeart3Fill
+              color="#DE3163"
+              size={32}
+              className={isWishlisted ? "block" : "hidden group-hover:block"}
+            />
+            <RiHeart3Line
+              size={32}
+              className={isWishlisted ? "hidden" : "block group-hover:hidden"}
+            />
           </div>
-          <div
-            onMouseEnter={() => setIsHoveringOverCart(true)}
-            onMouseLeave={() => setIsHoveringOverCart(false)}
-          >
-            {isHoveringOverCart ? (
-              <RiShoppingBag2Fill size={32} />
-            ) : (
-              <RiShoppingBag2Line size={32} />
-            )}
+          <div className="group" onClick={(e) => addToCart(e, product._id)}>
+            <RiShoppingBag2Fill
+              className={inCart ? "block" : "hidden group-hover:block"}
+              size={32}
+            />
+            <RiShoppingBag2Line
+              className={inCart ? "hidden" : "block group-hover:hidden"}
+              size={32}
+            />
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 export default ProductCard;

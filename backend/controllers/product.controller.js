@@ -1,5 +1,35 @@
 const productModel = require("../models/product.model");
 const shopModel = require("../models/shop.model");
+const WishlistModel = require("../models/wishlist.model");
+const cartModel = require("../models/cart.model");
+
+// Add helper functions at top
+const addWishlistStatus = async (products, userId = null) => {
+  if (!userId) return products;
+
+  const wishlist = await WishlistModel.findOne({ userId });
+  const wishlistedProducts = wishlist
+    ? wishlist.products.map((p) => p.toString())
+    : [];
+
+  return products.map((product) => ({
+    ...product.toObject(),
+    isWishlisted: wishlistedProducts.includes(product._id.toString()),
+  }));
+};
+const addCartStatus = async (products, userId = null) => {
+  if (!userId) return products;
+
+  const cart = await cartModel.findOne({ userId });
+  const cartProductIds = cart
+    ? cart.items.map((item) => item.productId.toString())
+    : [];
+
+  return products.map((product) => ({
+    ...product,
+    isInCart: cartProductIds.includes(product._id.toString()),
+  }));
+};
 
 module.exports.createProduct = async (req, res) => {
   try {
@@ -71,11 +101,21 @@ module.exports.deleteProduct = async (req, res, next) => {
 module.exports.getAllProducts = async (req, res, next) => {
   try {
     const products = await productModel.find({ isActive: true });
+    const productsWithWishlist = await addWishlistStatus(
+      products,
+      req.user?._id
+    );
+    const productsWithWishlistAndCart = await addCartStatus(
+      productsWithWishlist,
+      req.user?._id
+    );
 
     res.status(200).json({
-      products,
+      products: productsWithWishlistAndCart,
     });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports.getWomensWear = async (req, res, next) => {
@@ -84,8 +124,18 @@ module.exports.getWomensWear = async (req, res, next) => {
       category: "womenswear",
       isActive: true,
     });
-    res.status(200).json({
+    const productsWithWishlist = await addWishlistStatus(
       products,
+      req.user?._id
+    );
+
+    const productsWithWishlistAndCart = await addCartStatus(
+      productsWithWishlist,
+      req.user?._id
+    );
+
+    res.status(200).json({
+      products: productsWithWishlistAndCart,
     });
   } catch (error) {
     next(error);
@@ -98,8 +148,17 @@ module.exports.getMensWear = async (req, res, next) => {
       category: "menswear",
       isActive: true,
     });
-    res.status(200).json({
+    const productsWithWishlist = await addWishlistStatus(
       products,
+      req.user?._id
+    );
+    const productsWithWishlistAndCart = await addCartStatus(
+      productsWithWishlist,
+      req.user?._id
+    );
+
+    res.status(200).json({
+      products: productsWithWishlistAndCart,
     });
   } catch (error) {
     next(error);
@@ -112,8 +171,17 @@ module.exports.getKidsWear = async (req, res, next) => {
       category: "kids",
       isActive: true,
     });
-    res.status(200).json({
+    const productsWithWishlist = await addWishlistStatus(
       products,
+      req.user?._id
+    );
+    const productsWithWishlistAndCart = await addCartStatus(
+      productsWithWishlist,
+      req.user?._id
+    );
+
+    res.status(200).json({
+      products: productsWithWishlistAndCart,
     });
   } catch (error) {
     next(error);
@@ -126,8 +194,17 @@ module.exports.getSaleItems = async (req, res, next) => {
       discount: { $gt: 0 },
       isActive: true,
     });
-    res.status(200).json({
+    const productsWithWishlist = await addWishlistStatus(
       products,
+      req.user?._id
+    );
+    const productsWithWishlistAndCart = await addCartStatus(
+      productsWithWishlist,
+      req.user?._id
+    );
+
+    res.status(200).json({
+      products: productsWithWishlistAndCart,
     });
   } catch (error) {
     next(error);
@@ -141,8 +218,46 @@ module.exports.getProductById = async (req, res, next) => {
       isActive: true,
     });
 
+    const [productWithWishlist] = await addWishlistStatus(
+      [product],
+      req.user?._id
+    );
+    const productsWithWishlistAndCart = await addCartStatus(
+      productsWithWishlist,
+      req.user?._id
+    );
+
     res.status(200).json({
-      product,
+      products: productsWithWishlistAndCart,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.searchProducts = async (req, res, next) => {
+  try {
+    const { searchQuery } = req.query;
+    if (!searchQuery) {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    const searchPattern = new RegExp(searchQuery, "i");
+    const products = await productModel.find({
+      name: { $regex: searchPattern },
+      isActive: true,
+    });
+    const productsWithWishlist = await addWishlistStatus(
+      products,
+      req.user?._id
+    );
+    const productsWithWishlistAndCart = await addCartStatus(
+      productsWithWishlist,
+      req.user?._id
+    );
+
+    res.status(200).json({
+      products: productsWithWishlistAndCart,
     });
   } catch (error) {
     next(error);

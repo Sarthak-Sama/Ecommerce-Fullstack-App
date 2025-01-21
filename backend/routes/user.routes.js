@@ -16,5 +16,10 @@ router.get(
   authMiddleware.isAuthenticated,
   userController.transactionHistory
 );
+router.get(
+  "/profile/orders",
+  authMiddleware.isAuthenticated,
+  userController.orderHistory
+);
 
 module.exports = router;

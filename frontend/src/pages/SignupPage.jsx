@@ -1,6 +1,8 @@
 import axios from "../utils/axios";
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { signupUser } from "../redux/actions/userAction";
 
 const SignupPage = () => {
   const [password, setPassword] = useState("");
@@ -12,6 +14,7 @@ const SignupPage = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   // Function to check password strength using regex
   const handlePasswordChange = (e) => {
@@ -56,32 +59,27 @@ const SignupPage = () => {
       return;
     }
 
-    // Collect form data
-    const name = e.target.name.value;
-    const email = e.target.email.value;
-    const mobile = e.target.mobile.value;
+    const userData = {
+      username: e.target.name.value,
+      email: e.target.email.value,
+      mobile: e.target.mobile.value,
+      password,
+    };
+
     try {
-      const response = await axios.post("/user/signup", {
-        name,
-        email,
-        mobile,
-        password,
-      });
-      if (response.status === 200) {
-        setError(""); // Clear any existing errors
-        navigate(`${location.pathname}/verify-otp`, {
-          state: { mobile, password },
-        });
+      const result = await dispatch(signupUser(userData));
+
+      if (result.success) {
+        setError("");
+        // navigate(`${location.pathname}/verify-otp`, {
+        //   state: { mobile: userData.mobile, password: userData.password },
+        // });
+        navigate("/");
+      } else {
+        setError(result.error);
       }
     } catch (err) {
-      // Handle errors (e.g., network issues or server validation errors)
-      if (err.response && err.response.data) {
-        setError(
-          err.response.data.message || "Signup failed. Please try again."
-        );
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+      setError("Something went wrong. Please try again.");
     }
   };
 

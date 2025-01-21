@@ -7,7 +7,6 @@ router.get("/:shopName", shopController.fetchShopDets);
 router.post(
   "/create-shop",
   authMiddleware.isAuthenticated,
-  authMiddleware.isSeller,
   shopController.createShop
 );
 

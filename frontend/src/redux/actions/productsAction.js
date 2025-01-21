@@ -3,8 +3,8 @@ import { loadProducts } from "../reducers/productsSlice";
 
 export const fetchProducts = (category) => async (dispatch) => {
   try {
-    const response = await axios.get(`/product/${category}`);
-    dispatch(loadProducts(response.data));
+    const response = await axios.get(`/products/${category}`);
+    dispatch(loadProducts(response.data.products));
   } catch (error) {
     console.error("Error while fetching the products: ", error);
   }

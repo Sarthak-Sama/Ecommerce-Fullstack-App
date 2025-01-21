@@ -11,6 +11,7 @@ const userRoutes = require("./routes/user.routes");
 const productRoutes = require("./routes/products.routes");
 const cartRoutes = require("./routes/cart.routes");
 const shopRoutes = require("./routes/shop.routes");
+const wishlistRoutes = require("./routes/wishlist.routes");
 connectDB();
 
 app.use(express.json());
@@ -19,8 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", indexRoutes);
 app.use("/user", userRoutes);
 app.use("/shop", shopRoutes);
-app.use("/product", productRoutes);
+app.use("/products", productRoutes);
 app.use("/cart", cartRoutes);
+app.use("/wishlist", wishlistRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

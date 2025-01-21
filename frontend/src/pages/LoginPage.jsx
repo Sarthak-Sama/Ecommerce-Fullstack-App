@@ -1,21 +1,35 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../redux/actions/userAction";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // Form submit handler
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email === "" || password === "") {
-      setError("Please fill in all the fields.");
-    } else {
-      // Handle successful login
-      setError(""); // clear any errors
-      alert("Login successful!");
+    setError("");
+
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const result = await dispatch(loginUser({ email, password }));
+
+      if (result.success) {
+        navigate("/");
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
     }
   };
 

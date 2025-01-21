@@ -7,14 +7,19 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProductsPage from "./pages/ProductsPage";
 import VerifyOtp from "./components/VerifyOtp";
+import { useState } from "react";
+import ProductDetsPage from "./pages/ProductDetsPage";
+import ShopCreationPage from "./pages/ShopCreationPage";
+import WishlistPage from "./pages/WishlistPage";
 
 function App() {
   const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <div className="bg-[#FFFEFE] px-5 py-3 w-[100vw] relative">
+    <div className="bg-[#FFFEFE] px-5 py-3 h-screen w-screen relative overflow-x-hidden">
       {location.pathname !== "/login" && location.pathname !== "/signup" && (
-        <Navbar />
+        <Navbar setSearchQuery={setSearchQuery} />
       )}
       <div>
         <div className="relative z-50 w-full h-full">
@@ -26,6 +31,10 @@ function App() {
 
             <Route path="/" element={<HomePage />} />
             <Route path="/products/:category" element={<ProductsPage />} />
+            <Route path="/product/:productId" element={<ProductDetsPage />} />
+
+            <Route path="/shop-setup" element={<ShopCreationPage />} />
+            <Route path="/wishlist" element={<WishlistPage />} />
 
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

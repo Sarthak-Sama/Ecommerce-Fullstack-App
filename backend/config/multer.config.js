@@ -1,6 +1,7 @@
 const FirebaseStorage = require("multer-firebase-storage");
 const multer = require("multer");
-const serviceCreds = require("/etc/secrets/firebase.json");
+const serviceCreds = require("../etc/secrets/firebase.json"); // Development
+// const serviceCreds = require("/etc/secrets/firebase.json"); // Production
 const fbAdmin = require("./firebase.config");
 
 const storage = FirebaseStorage({

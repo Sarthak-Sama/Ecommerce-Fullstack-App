@@ -4,7 +4,7 @@ const userModel = require("../models/user.model");
 // Function to create a shop for the user
 module.exports.createShop = async (req, res, next) => {
   try {
-    const { name } = req.body; // Destructure name and description from request body
+    const { name, description } = req.body; // Destructure name and description from request body
 
     // Check if name and description are provided
     if (!name) {
@@ -12,11 +12,17 @@ module.exports.createShop = async (req, res, next) => {
         message: "Provide a name for the shop.",
       });
     }
+    if (!description) {
+      return res.status(400).json({
+        message: "Provide a description for the shop.",
+      });
+    }
 
     // Create a new shop associated with the user
     const shop = await shopModel.create({
       owner: req.user._id, // Associate shop with the user
       name,
+      description,
     });
     //Update the User role
     const user = await userModel.updateOne(

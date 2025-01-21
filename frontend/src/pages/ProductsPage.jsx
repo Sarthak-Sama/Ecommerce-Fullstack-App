@@ -1,26 +1,37 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../redux/actions/productsAction";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import ProductCard from "../components/partials/ProductCard";
+import { loadProducts } from "../redux/reducers/productsSlice";
 
 function ProductsPage() {
   const { category } = useParams();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const hasSearched = location.state?.hasSearched;
+  const searchedProducts = location.state?.searchedProducts;
 
   useEffect(() => {
-    dispatch(fetchProducts(category));
-  }, [dispatch, category]);
+    if (!hasSearched) {
+      dispatch(fetchProducts(category));
+    } else {
+      dispatch(loadProducts(searchedProducts));
+    }
+  }, [dispatch, category, hasSearched]);
 
   const { products } = useSelector((state) => state.products);
-  console.log(products);
   return (
     <div className="">
-      <div className="flex flex-wrap h-full w-screen gap-5">
-        {products.map((product) => (
-          <ProductCard product={product} />
-        ))}
-      </div>
+      {products ? (
+        <div className="flex flex-wrap sm:justify-start justify-center h-full w-screen gap-5">
+          {products.map((product) => (
+            <ProductCard product={product} />
+          ))}
+        </div>
+      ) : (
+        "Loading..."
+      )}
     </div>
   );
 }

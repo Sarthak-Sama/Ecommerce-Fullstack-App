@@ -8,13 +8,37 @@ const { auth } = require("firebase-admin");
 const router = express.Router();
 // ---------- GET ROUTES --------------//
 
-router.get("/all", productController.getAllProducts);
-router.get("/womens-wear", productController.getWomensWear);
-router.get("/mens-wear", productController.getMensWear);
-router.get("/kids", productController.getKidsWear);
-router.get("/sale", productController.getSaleItems);
-
-router.get("/:id", productController.getProductById);
+router.get(
+  "/search",
+  authMiddleware.optionalAuth,
+  productController.searchProducts
+);
+router.get(
+  "/all",
+  authMiddleware.optionalAuth,
+  productController.getAllProducts
+);
+router.get(
+  "/womens-wear",
+  authMiddleware.optionalAuth,
+  productController.getWomensWear
+);
+router.get(
+  "/mens-wear",
+  authMiddleware.optionalAuth,
+  productController.getMensWear
+);
+router.get("/kids", authMiddleware.optionalAuth, productController.getKidsWear);
+router.get(
+  "/sale",
+  authMiddleware.optionalAuth,
+  productController.getSaleItems
+);
+router.get(
+  "/:id",
+  authMiddleware.optionalAuth,
+  productController.getProductById
+);
 
 // -------- POST ROUTES ------- //
 router.post(
